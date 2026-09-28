@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (large files — regenerate with src/data_generation.py)
+data/raw/*.csv
+data/processed/*.csv
+data/processed/*.npy
+data/processed/*.pkl
+
+# Saved models
+models/*.h5
+models/*.keras
+models/checkpoint
+
+# Results (regenerate with evaluation scripts)
+results/figures/*.png
+results/metrics/*.json
+results/metrics/*.csv

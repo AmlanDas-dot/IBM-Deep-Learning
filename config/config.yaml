@@ -1,0 +1,123 @@
+# =============================================================================
+# RNN-Based Workout Progression Predictor — Configuration
+# =============================================================================
+# All configurable parameters in one place.
+# Avoid hard-coding these values elsewhere in the codebase.
+
+# --- Reproducibility ---
+random_seed: 42
+
+# --- Dataset Generation ---
+dataset:
+  num_athletes: 1000
+  num_weeks: 52
+  exercises:
+    - bench_press
+    - squat
+    - deadlift
+  output_path: "data/raw/workout_data.csv"
+
+# --- Plateau Definition ---
+plateau:
+  rolling_window: 3              # weeks for rolling average
+  improvement_threshold: 0.005   # 0.5% — plateau if improvement < this
+  # The plateau label uses a comparison of the current rolling-window block
+  # against the previous rolling-window block of estimated 1RM.
+
+# --- Feature Engineering ---
+features:
+  input_features:
+    - sets
+    - reps
+    - weight_kg
+    - rpe
+    - volume_kg
+    - estimated_1rm
+    - estimated_1rm_change_3w
+    - volume_change_3w
+  target: "target_plateau_next_week"
+
+# --- Sequence Generation ---
+sequence:
+  length: 6   # number of weeks in each input sequence
+
+# --- Data Splitting (athlete-level) ---
+split:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+# --- Preprocessing ---
+preprocessing:
+  scaler: "standard"   # "standard" or "minmax"
+  processed_dir: "data/processed"
+
+# --- LSTM Model ---
+model:
+  lstm_units_1: 64
+  lstm_units_2: 32
+  dropout_rate: 0.2
+  dense_units: 16
+  learning_rate: 0.001
+  batch_size: 64
+  max_epochs: 100
+  early_stopping_patience: 10
+  reduce_lr_patience: 5
+  reduce_lr_factor: 0.5
+
+# --- Paths ---
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  models: "models"
+  figures: "results/figures"
+  metrics: "results/metrics"
+
+# --- Simulator / UI ---
+simulator:
+  # Auto-progression constraints
+  progression:
+    progression_rate_percent_per_week: 1.5
+    min_weekly_increase_percent: 0.0
+    max_single_increment_kg: 2.5
+    min_days_between_weight_increases: 5
+    plateau_probability: 0.15
+    regression_probability: 0.03
+
+  min_weight_kg: 20.0
+  max_weight_kg: 300.0
+
+  # Rep / set / RPE bounds
+  min_sets: 2
+  max_sets: 6
+  min_reps: 1
+  max_reps: 12
+  rpe_min: 5.0
+  rpe_max: 10.0
+
+  # Bodyweight
+  bodyweight_drift_std: 0.15       # kg std per workout
+
+  # Rest-day probability in auto-progression
+  rest_day_probability: 0.12
+
+  # Exercise-specific starting defaults
+  exercise_defaults:
+    bench_press:
+      start_weight: 60
+      typical_sets: 3
+      typical_reps: 8
+      base_progression_kg: 0.75
+      increment: 2.5
+    squat:
+      start_weight: 80
+      typical_sets: 4
+      typical_reps: 6
+      base_progression_kg: 1.0
+      increment: 5.0
+    deadlift:
+      start_weight: 100
+      typical_sets: 3
+      typical_reps: 5
+      base_progression_kg: 1.0
+      increment: 5.0
